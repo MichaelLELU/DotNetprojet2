@@ -3,15 +3,19 @@ using System.Linq;
 
 namespace P2FixAnAppDotNetCode.Models
 {
+    using System;
+
     /// <summary>
     /// The Cart class
     /// </summary>
     public class Cart : ICart
     {
+
+        private List<CartLine> _cartLines = new List<CartLine>();
         /// <summary>
         /// Read-only property for display only
         /// </summary>
-        public IEnumerable<CartLine> Lines => GetCartLineList();
+        public IEnumerable<CartLine> Lines => _cartLines;
 
         /// <summary>
         /// Return the actual cartline list
@@ -19,15 +23,29 @@ namespace P2FixAnAppDotNetCode.Models
         /// <returns></returns>
         private List<CartLine> GetCartLineList()
         {
-            return new List<CartLine>();
+            return _cartLines; 
         }
+
 
         /// <summary>
         /// Adds a product in the cart or increment its quantity in the cart if already added
         /// </summary>//
         public void AddItem(Product product, int quantity)
         {
-            // TODO implement the method
+
+            var cartLines = GetCartLineList();
+            var line = cartLines.FirstOrDefault(l => l.Product.Id == product.Id);
+
+            if (line == null)
+            {
+                line = new CartLine(product, quantity);
+                cartLines.Add(line);
+            }
+            else
+            {
+                line.Quantity += quantity;
+            }
+            Console.WriteLine($"Produit ajouté : {line.Product.Name}, Quantité : {line.Quantity}");
         }
 
         /// <summary>
@@ -41,8 +59,7 @@ namespace P2FixAnAppDotNetCode.Models
         /// </summary>
         public double GetTotalValue()
         {
-            // TODO implement the method
-            return 0.0;
+            return _cartLines.Sum(line => line.Product.Price * line.Quantity);
         }
 
         /// <summary>
@@ -50,8 +67,11 @@ namespace P2FixAnAppDotNetCode.Models
         /// </summary>
         public double GetAverageValue()
         {
-            // TODO implement the method
-            return 0.0;
+            
+            var totalQuantity = _cartLines.Sum(line => line.Quantity);
+            var totalValue = _cartLines.Sum(line => line.Product.Price * line.Quantity);
+
+            return totalQuantity > 0 ? totalValue / totalQuantity : 0;
         }
 
         /// <summary>
@@ -86,5 +106,11 @@ namespace P2FixAnAppDotNetCode.Models
         public int OrderLineId { get; set; }
         public Product Product { get; set; }
         public int Quantity { get; set; }
+
+        public CartLine(Product product, int quantity)
+        {
+            Product = product;
+            Quantity = quantity;
+        }
     }
 }

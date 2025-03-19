@@ -3,6 +3,8 @@ using System.Linq;
 
 namespace P2FixAnAppDotNetCode.Models.Repositories
 {
+    using System;
+
     /// <summary>
     /// The class that manages product data
     /// </summary>
@@ -36,6 +38,15 @@ namespace P2FixAnAppDotNetCode.Models.Repositories
         {
             List<Product> list = _products.Where(p => p.Stock > 0).OrderBy(p => p.Name).ToList();
             return list.ToArray();
+        }
+
+        /// <summary>
+        /// Get one product from the inventory by its id
+        /// </summary>
+        public Product GetOneProductById(int id)
+        {
+            var product = _products.FirstOrDefault(p => p.Id == id);
+            return product;
         }
 
         /// <summary>
