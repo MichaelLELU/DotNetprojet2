@@ -38,7 +38,11 @@ namespace P2FixAnAppDotNetCode
                 .AddViewLocalization(
                     LanguageViewLocationExpanderFormat.Suffix,
                     opts => { opts.ResourcesPath = "Resources"; })
-                .AddDataAnnotationsLocalization();
+                .AddDataAnnotationsLocalization(options =>
+                    {
+                        options.DataAnnotationLocalizerProvider = (type, factory) =>
+                            factory.Create(typeof(Resources.Models.ViewModels.Order)); 
+                    });
 
             services.Configure<RequestLocalizationOptions>(opts =>
             { 
@@ -49,6 +53,8 @@ namespace P2FixAnAppDotNetCode
                     new CultureInfo("en"),
                     new CultureInfo("fr-FR"),
                     new CultureInfo("fr"),
+                    new CultureInfo("es-ES"),
+                    new CultureInfo("es")
                 };
 
                 opts.DefaultRequestCulture = new RequestCulture("en");
